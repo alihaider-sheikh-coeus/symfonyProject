@@ -13,8 +13,8 @@ class ArticleController extends AbstractController
      */
     public function index(): Response
     {
-        return $this->render('article/index.html.twig', [
-            'controller_name' => 'ArticleController',
+        return $this->render('article/show.html.twig', [
+            'title' => $slug,
         ]);
     }
 /**
@@ -29,6 +29,16 @@ class ArticleController extends AbstractController
      */
     public function show($slug)
     {
-        return new Response("future page to show article ".$slug);
+        $comments = [
+            'I ate a normal rock once. It did NOT taste like bacon!',
+            'Woohoo! I\'m going on an all-asteroid diet!',
+            'I like bacon too! Buy some from my site! bakinsomebacon.com',
+        ];
+
+        return $this->render('article/show.html.twig', [
+            'title' => ucwords(str_replace('-', ' ', $slug)),
+            'slug' => $slug,
+            'comments' => $comments,
+        ]);
     }
 }
