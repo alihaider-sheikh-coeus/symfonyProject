@@ -2,43 +2,63 @@
 
 namespace App\Controller;
 
+use App\Entity\Article;
+use App\Repository\ArticleRepository;
+use App\service\MarkdownHelper;
+
+use Doctrine\ORM\EntityManagerInterface;
+use Michelf\MarkdownInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ArticleController extends AbstractController
 {
-    /**
-     * @Route("/article", name="article")
-     */
-    public function index(): Response
-    {
-        return $this->render('article/show.html.twig', [
-            'title' => $slug,
-        ]);
-    }
+
 /**
- * @Route ("/",name="")
+ * @Route ("/",name="app_homepage")
 */
-    public function homepage():Response
+    public function homepage(ArticleRepository $repository ):Response
     {
-        return new Response("first route");
+//       $repo= $repository->getRepository(Article::class);
+       $articles=$repository->findAllPublishedOrderedByNewest();
+//        dump($articles);die();
+        return $this->render('article/homepage.html.twig',['articles'=>$articles]);
     }
     /**
-     * @Route ("/news/{slug}",name="")
+     * @Route("/news/{slug}", name="article_show")
      */
-    public function show($slug)
+    public function show(Article $article)
     {
-        $comments = [
-            'I ate a normal rock once. It did NOT taste like bacon!',
-            'Woohoo! I\'m going on an all-asteroid diet!',
-            'I like bacon too! Buy some from my site! bakinsomebacon.com',
-        ];
+        if ($article->getSlug() === 'khaaaaaan') {
+//            $slack->sendMessage('Kahn', 'Ah, Kirk, my old friend...');
+        }
+
+//        $comments = [
+//            'I ate a normal rock once. It did NOT taste like bacon!',
+//            'Woohoo! I\'m going on an all-asteroid diet!',
+//            'I like bacon too! Buy some from my site! bakinsomebacon.com',
+//        ];
 
         return $this->render('article/show.html.twig', [
-            'title' => ucwords(str_replace('-', ' ', $slug)),
-            'slug' => $slug,
-            'comments' => $comments,
+            'article' => $article,
+//            'comments' => $article->getComments(),
         ]);
+    }
+
+    /**
+     * @Route("/news/{slug}/heart", name="article_toggle_heart", methods={"POST"})
+     */
+    public function toggleArticleHeart(Article $article, LoggerInterface $logger, EntityManagerInterface $em)
+    {
+        $article->incrementHeartCount();
+        $em->flush();
+
+//        $logger->info('Article is being hearted!');
+
+        return new JsonResponse(['hearts' => $article->getHeartCount()]);
     }
 }
