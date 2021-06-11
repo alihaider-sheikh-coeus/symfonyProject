@@ -4,15 +4,20 @@ namespace App\Controller;
 
 use App\Repository\CommentRepository;
 use Knp\Component\Pager\PaginatorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @IsGranted("ROLE_ADMIN")
+*/
 class CommentAdminConrollerController extends AbstractController
 {
     /**
      * @Route("/admin/comment", name="comment_admin")
+
      */
     public function index(CommentRepository $commentRepository,Request $request,CommentRepository $repository,PaginatorInterface $paginator): Response
     {

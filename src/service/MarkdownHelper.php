@@ -8,6 +8,7 @@ use Knp\Bundle\MarkdownBundle\MarkdownParserInterface;
 use Michelf\MarkdownInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Symfony\Component\Security\Core\Security;
 
 class MarkdownHelper
 {
@@ -16,7 +17,7 @@ class MarkdownHelper
     private $logger;
     private $isDebug;
 
-    public function __construct(AdapterInterface $cache, MarkdownInterface $markdown)
+    public function __construct(AdapterInterface $cache, MarkdownInterface $markdown,Security $security)
     {
         $this->cache = $cache;
         $this->markdown = $markdown;
