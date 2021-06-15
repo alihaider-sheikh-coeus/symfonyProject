@@ -20,10 +20,11 @@ class UserFixture extends BaseFixtures
     }
     protected function loadData(ObjectManager $manager)
     {
-        $this->createMany(10, 'main_group',function($i) use($manager) {
+        $this->createMany(10, 'main_users',function($i) use($manager) {
             $user = new User();
             $user->setEmail(sprintf('spacebar%d@example.com', $i));
             $user->setFirstName($this->faker->firstName);
+            $user->agreeTerms();
             $user->setPassword($this->passwordEncoder->encodePassword(
                 $user,
                 'engage'
@@ -33,6 +34,9 @@ class UserFixture extends BaseFixtures
             if ($this->faker ->boolean) {
                 $user->setTwitterUsername($this->faker->userName);
             }
+            $apiToken1 = new ApiToken($user);
+//            $apiToken2 = new ApiToken($user);
+            $manager->persist($apiToken1);
             return $user;
 //
    });
@@ -40,6 +44,7 @@ class UserFixture extends BaseFixtures
             $user = new User();
             $user->setEmail(sprintf('admin%d@thespacebar.com', $i));
             $user->setFirstName($this->faker->firstName);
+            $user->agreeTerms();
             $user->setRoles(['ROLE_ADMIN']);
 
             $user->setPassword($this->passwordEncoder->encodePassword(
@@ -47,9 +52,9 @@ class UserFixture extends BaseFixtures
                 'engage'
             ));
             $apiToken1 = new ApiToken($user);
-            $apiToken2 = new ApiToken($user);
+//            $apiToken2 = new ApiToken($user);
             $manager->persist($apiToken1);
-            $manager->persist($apiToken2);
+//            $manager->persist($apiToken2);
             return $user;
         });
 
